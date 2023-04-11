@@ -22,10 +22,9 @@ fn main() {
     while 'condition: {
         let edges = generate_random_graph_edges(args.nodes, args.edges);
         println!("{edges:?}");
-        for (i, sub) in edges.clone().into_iter().permutations(args.edges - 3).enumerate() {
-            println!("{i}");
+        for sub in edges.clone().into_iter().combinations(args.edges - 3) {
             if !Graph::new(args.nodes, sub).is_connected() {
-                break 'condition true
+                break 'condition true;
             }
         }
         println!("{edges:?}");
