@@ -1,6 +1,5 @@
 use clap::Parser;
 use graph::*;
-use itertools::Itertools;
 
 pub mod graph;
 
@@ -17,24 +16,31 @@ struct Args {
 
     /// k
     #[arg(short)]
-    k: usize
+    k: usize,
+
+    /// enumerate all k-edge-connected induced subgraphs
+    #[arg(short, long)]
+    subgraphs: bool,
 }
 
 fn main() {
     let args = Args::parse();
 
-    while 'condition: {
+    while {
         let edges = generate_random_graph_edges(args.nodes, args.edges);
         if args.edges <= args.k {
-            println!("All graph of {} edges is not {}-edge-connected (not defined).", args.edges, args.k);
-            return
+            println!(
+                "All graph of {} edges is not {}-edge-connected (not defined).",
+                args.edges, args.k
+            );
+            return;
         }
-        for sub in edges.clone().into_iter().combinations(args.edges - args.k) {
-            if !Graph::new(args.nodes, sub).is_connected() {
-                break 'condition true;
+        !Graph::new(args.nodes, edges.clone()).is_k_edge_connected(args.k) || {
+            println!("{edges:?} is {}-edge-connected.", args.k);
+            if args.subgraphs {
+                enumerate_k_edge_connected_induced_subgraphs(args.nodes, edges, args.k);
             }
+            false
         }
-        println!("{edges:?} is {}-edge-connected.", args.k);
-        false
     } {}
 }
