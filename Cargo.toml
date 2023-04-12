@@ -1,5 +1,5 @@
 [package]
-name = "generate-3-edge-connected-graph"
+name = "generate-k-edge-connected-graph"
 version = "0.1.0"
 edition = "2021"
 

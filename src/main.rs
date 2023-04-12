@@ -8,12 +8,16 @@ pub mod graph;
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// The number of nodes
-    #[arg(short, long, default_value_t = 1)]
+    #[arg(short, long)]
     nodes: usize,
 
     /// The number of edges
-    #[arg(short, long, default_value_t = 0)]
+    #[arg(short, long)]
     edges: usize,
+
+    /// k
+    #[arg(short)]
+    k: usize
 }
 
 fn main() {
@@ -21,13 +25,16 @@ fn main() {
 
     while 'condition: {
         let edges = generate_random_graph_edges(args.nodes, args.edges);
-        println!("{edges:?}");
-        for sub in edges.clone().into_iter().combinations(args.edges - 3) {
+        if args.edges <= args.k {
+            println!("All graph of {} edges is not {}-edge-connected (not defined).", args.edges, args.k);
+            return
+        }
+        for sub in edges.clone().into_iter().combinations(args.edges - args.k) {
             if !Graph::new(args.nodes, sub).is_connected() {
                 break 'condition true;
             }
         }
-        println!("{edges:?}");
+        println!("{edges:?} is {}-edge-connected.", args.k);
         false
     } {}
 }
