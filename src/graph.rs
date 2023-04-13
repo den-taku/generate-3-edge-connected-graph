@@ -79,23 +79,19 @@ pub fn enumerate_k_edge_connected_induced_subgraphs<
             .collect();
         let subgraph = Graph::new(
             sub.len(),
-            edges
-                .clone()
-                .into_iter()
-                .map(|(u, v)| {
-                    let u_comp = compressed[u];
-                    let v_comp = compressed[v];
-                    if let Some(u) = u_comp {
-                        if let Some(v) = v_comp {
-                            Some((u, v))
-                        } else {
-                            None
-                        }
+            edges.clone().into_iter().filter_map(|(u, v)| {
+                let u_comp = compressed[u];
+                let v_comp = compressed[v];
+                if let Some(u) = u_comp {
+                    if let Some(v) = v_comp {
+                        Some((u, v))
                     } else {
                         None
                     }
-                })
-                .flatten(),
+                } else {
+                    None
+                }
+            }),
         );
         if subgraph.is_k_edge_connected(k) {
             println!("  subgraphs: {sub:?} is {}-edge-connected.", k);
